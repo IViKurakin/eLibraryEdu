@@ -1,0 +1,676 @@
+/* Общие стили */
+:root {
+  --primary-color: #2d1b69; /* Темно-сиреневый */
+  --secondary-color: #000000; /* Черный */
+  --accent-color: #5d4a9a; /* Светло-сиреневый */
+  --light-bg: #ffffff; /* Белый */
+  --dark-text: #1a1a1a; /* Темно-серый почти черный */
+  --light-text: #666666; /* Серый */
+  --success-color: #27ae60;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --border-radius: 12px;
+  --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  --box-shadow-hover: 0 15px 40px rgba(45, 27, 105, 0.2);
+  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+/* Подключение шрифта Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  line-height: 1.7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.container {
+  flex: 1;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Навигационная панель */
+.navbar {
+  background: var(--gradient-primary) !important;
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  padding: 1rem 0;
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: var(--transition);
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-nav {
+  gap: 10px;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: var(--transition);
+  margin: 0 8px;
+  border-radius: var(--border-radius);
+  padding: 10px 20px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Карточки */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  height: 100%;
+  overflow: hidden;
+  background: var(--light-bg);
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.card-body {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.card-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.card:hover .card-title {
+  color: var(--accent-color);
+}
+
+.card-text {
+  color: var(--light-text);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Кнопки */
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+  padding: 12px 28px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 15px rgba(45, 27, 105, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(45, 27, 105, 0.4);
+  background: var(--gradient-primary);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(45, 27, 105, 0.3);
+}
+
+/* Заголовки */
+.display-4 {
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: float 3s ease-in-out infinite;
+}
+
+.lead {
+  color: var(--light-text);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+/* Формы */
+.form-control {
+  border-radius: var(--border-radius);
+  border: 2px solid #e8e8e8;
+  padding: 15px 20px;
+  transition: var(--transition);
+  font-size: 1rem;
+  background: var(--light-bg);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.3rem rgba(45, 27, 105, 0.15);
+  transform: translateY(-2px);
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+/* Страница исследования книг */
+.category-section {
+  margin-bottom: 4rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.category-title {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 2rem;
+  position: relative;
+}
+
+.category-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--accent-color);
+  transition: width 0.4s ease;
+}
+
+.category-title:hover::after {
+  width: 120px;
+}
+
+.book-card {
+  transition: var(--transition);
+  height: 100%;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.book-card:hover {
+  transform: translateY(-10px) rotate(1deg);
+}
+
+.book-cover {
+  height: 250px;
+  object-fit: cover;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.book-card:hover .book-cover {
+  transform: scale(1.1);
+}
+
+/* Страница просмотра книги */
+.book-detail-card {
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.book-summary {
+  line-height: 1.9;
+  font-size: 1.15rem;
+  color: var(--dark-text);
+}
+
+.book-meta {
+  background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  border-left: 4px solid var(--primary-color);
+  transition: var(--transition);
+}
+
+.book-meta:hover {
+  transform: translateX(10px);
+  box-shadow: var(--box-shadow);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.2rem;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .nav-link {
+    text-align: center;
+    margin: 5px 0;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+}
+
+/* Сообщения */
+.alert {
+  border-radius: var(--border-radius);
+  border: none;
+  font-weight: 500;
+  padding: 20px 25px;
+  margin: 20px 0;
+  animation: slideInLeft 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.alert::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: currentColor;
+}
+
+.alert-success {
+  background-color: rgba(39, 174, 96, 0.1);
+  color: var(--success-color);
+  border-left: 4px solid var(--success-color);
+}
+
+.alert-danger {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+  border-left: 4px solid var(--danger-color);
+}
+
+.alert-info {
+  background-color: rgba(93, 74, 154, 0.1);
+  color: var(--accent-color);
+  border-left: 4px solid var(--accent-color);
+}
+
+/* Футер */
+.footer {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 40px 0 20px;
+  margin-top: 80px;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--primary-color), var(--accent-color));
+}
+
+/* Утилиты */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.bg-primary {
+  background: var(--gradient-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+/* Стили для страницы входа и регистрации */
+.auth-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px;
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-primary);
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 35px;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 2.2rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Стили для страницы добавления/редактирования книги */
+.form-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 40px;
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.form-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Стили для страницы "Мои книги" */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.book-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.action-btn {
+  flex: 1;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Стили для страницы просмотра книги */
+.book-header {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 50px 0;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+  background-size: cover;
+}
+
+.book-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.pdf-viewer {
+  width: 100%;
+  height: 700px;
+  border: 2px solid #e8e8e8;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.pdf-viewer:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--box-shadow-hover);
+}
+
+/* Дополнительные эффекты */
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.progress-bar {
+  background: var(--gradient-primary);
+  border-radius: 10px;
+  height: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Эффект параллакса */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Стили для иконок */
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  margin-right: 15px;
+  transition: var(--transition);
+}
+
+.icon-wrapper:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 10px;
+  transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}

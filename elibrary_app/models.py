@@ -1,20 +1,56 @@
-''' МОДЕЛИ ПРОЕКТА '''
-'''
-Модели с полями для названий книг, аннотаций, количества страниц, загрузки PDF-файлов, имени автора, категории и идентификатора.
-Модели позволяют хранить и извлекать информацию о книгах.
-'''
+"""
+Модели данных приложения электронной библиотеки.
+
+Определяет структуру данных для хранения информации об электронных книгах.
+Модель EBooksModel содержит все необходимые поля для описания книги
+и управления библиотекой.
+"""
 
 from django.db import models
 
+
 class EBooksModel(models.Model):
-    title = models.CharField(max_length=150)
-    summary = models.TextField(max_length=2000)
-    pages = models.CharField(max_length=100)
-    pdf = models.FileField(upload_to='pdfs/')
-    author = models.CharField(max_length=100)
-    category = models.CharField(max_length=300)
-    author_id = models.IntegerField(default=0)
+    """
+    Модель электронной книги.
     
-    # Метод __str__() класса EBooksModel определяет строковое представление экземпляра, возвращая название книги
+    Хранит информацию о книгах в электронной библиотеке:
+        - Основные метаданные (название, аннотация, страницы)
+        - Файловое представление (PDF)
+        - Информация об авторе
+        - Категоризация
+        
+    Атрибуты:
+        title (CharField): Название книги (макс. 150 символов)
+        summary (TextField): Аннотация книги (макс. 2000 символов)
+        pages (CharField): Количество страниц (макс. 100 символов)
+        pdf (FileField): PDF-файл книги (загружается в 'pdfs/')
+        author (CharField): Имя автора (макс. 100 символов)
+        category (CharField): Категория книги (макс. 300 символов)
+        author_id (IntegerField): Идентификатор автора-пользователя
+        
+    Методы:
+        __str__(): Строковое представление объекта (название книги)
+    """
+    
+    # Основные метаданные книги
+    title = models.CharField(max_length=150)          # Название книги
+    summary = models.TextField(max_length=2000)       # Аннотация/описание
+    pages = models.CharField(max_length=100)          # Количество страниц
+    
+    # Файловое представление
+    pdf = models.FileField(upload_to='pdfs/')         # PDF-файл книги
+    
+    # Информация об авторе
+    author = models.CharField(max_length=100)         # Имя автора для отображения
+    category = models.CharField(max_length=300)       # Категория книги
+    author_id = models.IntegerField(default=0)        # Связь с пользователем-автором
+    
     def __str__(self):
+        """
+        Строковое представление объекта книги.
+        
+        Returns:
+            str: Название книги для удобного отображения в административной панели
+                и при выводе объектов
+        """
         return f"{self.title}"

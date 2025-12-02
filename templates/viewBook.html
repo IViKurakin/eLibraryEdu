@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронная библиотека - {{ book.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">eLibrary</a>
+            <div class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'contri' user.id %}">Мои книги</a>
+                    <a class="nav-link" href="{% url 'addBook' user.id %}">Добавить книгу</a>
+                    <a class="nav-link" href="{% url 'logout' %}">Выйти ({{ user.first_name }})</a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                    <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Основная информация о книге -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="card-title mb-0">{{ book.title }}</h4>
+                            <span class="badge bg-light text-dark">{{ book.category }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p><strong>Автор:</strong> {{ book.author }}</p>
+                                <p><strong>Количество страниц:</strong> {{ book.pages }}</p>
+                                <p><strong>Категория:</strong> {{ book.category }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Добавлена:</strong> Автором</p>
+                                <p><strong>Формат:</strong> PDF</p>
+                                <p><strong>Доступность:</strong> Общедоступна</p>
+                            </div>
+                        </div>
+
+                        <h5>Аннотация</h5>
+                        <div class="border rounded p-3 bg-light">
+                            {{ book.summary|safe }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Действия с книгой -->
+                {% if user.is_authenticated and user.id == book.author_id %}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Управление книгой</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'editBook' book.id %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Редактировать
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                            <a href="{{ book.pdf.url }}" class="btn btn-success" download>
+                                <i class="fas fa-download"></i> Скачать оригинал
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Боковая панель с действиями и информацией -->
+            <div class="col-lg-4">
+                <!-- Скачивание книги -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5 class="card-title mb-0">Скачать книгу</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                        </div>
+                        <p class="card-text">Доступна для скачивания в формате PDF</p>
+                        <a href="{{ book.pdf.url }}" class="btn btn-success w-100 mb-2" download>
+                            <i class="fas fa-download"></i> Скачать PDF
+                        </a>
+                        <a href="{{ book.pdf.url }}" target="_blank" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-external-link-alt"></i> Открыть в новой вкладке
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Информация о книге -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">Информация</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Формат:</span>
+                            <strong>PDF</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Размер файла:</span>
+                            <strong>~{{ book.pages|add:0|default:100 }} стр.</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Категория:</span>
+                            <strong>{{ book.category }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Язык:</span>
+                            <strong>Русский</strong>
+                        </div>
+                        <hr>
+                        <small class="text-muted">
+                            Книга добавлена пользователем системы eLibrary
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Навигация -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body text-center">
+                        <a href="{% url 'explore' %}" class="btn btn-outline-primary btn-sm me-2">
+                            Все книги
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'contri' user.id %}" class="btn btn-outline-secondary btn-sm">
+                                Мои книги
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления (только для автора) -->
+    {% if user.is_authenticated and user.id == book.author_id %}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить книгу <strong>"{{ book.title }}"</strong>?</p>
+                    <p class="text-danger"><small>Это действие нельзя отменить. Книга будет полностью удалена из системы.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <a href="{% url 'deleteBook' book.id %}" class="btn btn-danger">Удалить книгу</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+</body>
+</html>
