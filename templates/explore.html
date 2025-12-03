@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Обзор книг - Электронная библиотека{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active">Обзор книг</li>
+{% endblock %}
+
+{% block content %}
+<div class="search-section bg-primary text-white rounded-3 p-4 p-md-5 mb-5 position-relative overflow-hidden">
+    <div class="position-absolute top-0 end-0 w-50 h-100 d-none d-md-block">
+        <div class="bg-white opacity-10 w-100 h-100 rounded-start"></div>
+    </div>
+    
+    <div class="position-relative z-1">
+        <h1 class="display-5 fw-bold mb-3">Найдите нужную книгу</h1>
+        <p class="lead mb-4 opacity-75">Поиск по названию, автору или ключевым словам</p>
+        
+        <form class="search-form" method="GET" action="#">
+            <div class="input-group input-group-lg shadow">
+                <input type="text" class="form-control border-0 py-3" 
+                       placeholder="Введите название книги, автора или тему..." 
+                       aria-label="Поиск книг">
+                <button class="btn btn-light px-4" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+                <button class="btn btn-outline-light px-4" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#advancedSearch">
+                    <i class="bi bi-filter"></i>
+                </button>
+            </div>
+        </form>
+        
+        <div class="collapse mt-3" id="advancedSearch">
+            <div class="card card-body bg-dark border-0">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Категория</label>
+                        <select class="form-select bg-dark text-white border-secondary">
+                            <option value="">Все категории</option>
+                            <option value="Education">Образование</option>
+                            <option value="Fiction">Художественная литература</option>
+                            <option value="Science">Наука</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Сортировка</label>
+                        <select class="form-select bg-dark text-white border-secondary">
+                            <option value="newest">По дате добавления</option>
+                            <option value="popular">По популярности</option>
+                            <option value="title">По названию</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Год издания</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary" 
+                               placeholder="Год">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quick-filters mb-5">
+    <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-primary active" data-filter="all">
+            Все книги
+        </button>
+        <button class="btn btn-outline-primary" data-filter="Education">
+            <i class="bi bi-mortarboard me-1"></i>Образование
+        </button>
+        <button class="btn btn-outline-success" data-filter="Fiction">
+            <i class="bi bi-palette me-1"></i>Художественные
+        </button>
+        <button class="btn btn-outline-warning" data-filter="Science">
+            <i class="bi bi-flask me-1"></i>Научные
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary text-white rounded-3 p-4 text-center">
+            <div class="stat-number display-4 fw-bold">{{ edu_books|length }}</div>
+            <div class="stat-label">Образовательные книги</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success text-white rounded-3 p-4 text-center">
+            <div class="stat-number display-4 fw-bold">{{ fiction_books|length }}</div>
+            <div class="stat-label">Художественные книги</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-white rounded-3 p-4 text-center">
+            <div class="stat-number display-4 fw-bold">{{ science_books|length }}</div>
+            <div class="stat-label">Научные книги</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info text-white rounded-3 p-4 text-center">
+            <div class="stat-number display-4 fw-bold">{{ total_books }}</div>
+            <div class="stat-label">Всего книг</div>
+        </div>
+    </div>
+</div>
+
+<section id="education" class="category-section mb-5">
+    <div class="category-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-mortarboard text-primary me-2"></i>Образовательные книги</h2>
+            <p class="text-muted mb-0">Учебники, методические пособия, справочники</p>
+        </div>
+        <span class="badge bg-primary fs-6">{{ edu_books|length }} книг</span>
+    </div>
+    
+    <div class="row g-4">
+        {% for book in edu_books|slice:":6" %}
+        <div class="col-md-6 col-lg-4" data-category="Education">
+            {% include 'partials/book_card.html' with book=book %}
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-mortarboard display-1 text-muted"></i>
+                <h4 class="mt-3">Пока нет книг в этой категории</h4>
+                <p class="text-muted">Будьте первым, кто добавит образовательную книгу</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'addBook' user.id %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-plus-circle me-2"></i>Добавить книгу
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if edu_books|length > 6 %}
+    <div class="text-center mt-4">
+        <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#moreEducation">
+            Показать еще {{ edu_books|length|add:"-6" }} книг
+        </button>
+    </div>
+    
+    <div class="collapse mt-4" id="moreEducation">
+        <div class="row g-4">
+            {% for book in edu_books|slice:"6:" %}
+            <div class="col-md-6 col-lg-4" data-category="Education">
+                {% include 'partials/book_card.html' with book=book %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<section id="fiction" class="category-section mb-5">
+    <div class="category-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-palette text-success me-2"></i>Художественная литература</h2>
+            <p class="text-muted mb-0">Романы, рассказы, поэзия</p>
+        </div>
+        <span class="badge bg-success fs-6">{{ fiction_books|length }} книг</span>
+    </div>
+    
+    <div class="row g-4">
+        {% for book in fiction_books|slice:":6" %}
+        <div class="col-md-6 col-lg-4" data-category="Fiction">
+            {% include 'partials/book_card.html' with book=book %}
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-palette display-1 text-muted"></i>
+                <h4 class="mt-3">Пока нет книг в этой категории</h4>
+                <p class="text-muted">Добавьте художественные произведения</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'addBook' user.id %}" class="btn btn-success mt-3">
+                    <i class="bi bi-plus-circle me-2"></i>Добавить книгу
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if fiction_books|length > 6 %}
+    <div class="text-center mt-4">
+        <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#moreFiction">
+            Показать еще {{ fiction_books|length|add:"-6" }} книг
+        </button>
+    </div>
+    
+    <div class="collapse mt-4" id="moreFiction">
+        <div class="row g-4">
+            {% for book in fiction_books|slice:"6:" %}
+            <div class="col-md-6 col-lg-4" data-category="Fiction">
+                {% include 'partials/book_card.html' with book=book %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<section id="science" class="category-section mb-5">
+    <div class="category-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-flask text-warning me-2"></i>Научная литература</h2>
+            <p class="text-muted mb-0">Исследования, монографии, научные статьи</p>
+        </div>
+        <span class="badge bg-warning fs-6">{{ science_books|length }} книг</span>
+    </div>
+    
+    <div class="row g-4">
+        {% for book in science_books|slice:":6" %}
+        <div class="col-md-6 col-lg-4" data-category="Science">
+            {% include 'partials/book_card.html' with book=book %}
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-flask display-1 text-muted"></i>
+                <h4 class="mt-3">Пока нет книг в этой категории</h4>
+                <p class="text-muted">Поделитесь научными знаниями</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'addBook' user.id %}" class="btn btn-warning mt-3">
+                    <i class="bi bi-plus-circle me-2"></i>Добавить книгу
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if science_books|length > 6 %}
+    <div class="text-center mt-4">
+        <button class="btn btn-outline-warning" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#moreScience">
+            Показать еще {{ science_books|length|add:"-6" }} книг
+        </button>
+    </div>
+    
+    <div class="collapse mt-4" id="moreScience">
+        <div class="row g-4">
+            {% for book in science_books|slice:"6:" %}
+            <div class="col-md-6 col-lg-4" data-category="Science">
+                {% include 'partials/book_card.html' with book=book %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<section class="mt-5 pt-5 border-top">
+    <h3 class="mb-4"><i class="bi bi-stars text-info me-2"></i>Рекомендуемые книги</h3>
+    <div class="row g-4">
+        {% for book in recommended_books|slice:":3" %}
+        <div class="col-md-4">
+            <div class="card border-info border-2 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <div class="recommended-badge bg-info text-white rounded-circle p-2 me-3">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text text-muted small">{{ book.author }}</p>
+                            <a href="{% url 'viewBook' book.id %}" class="btn btn-outline-info btn-sm">
+                                Читать <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-4">
+            <p class="text-muted">Рекомендации появятся после добавления книг</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const bookCards = document.querySelectorAll('[data-category]');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                bookCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        document.querySelectorAll('.category-header h2').forEach(header => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', function() {
+                const sectionId = this.closest('section').id;
+                document.getElementById(sectionId).scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+        });
+        
+        const cards = document.querySelectorAll('.book-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

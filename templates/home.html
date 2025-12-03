@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Электронная библиотека{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5 mb-5 rounded-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container text-white text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">Добро пожаловать в электронную библиотеку колледжа</h1>
+                <p class="lead mb-4">Доступ к тысячам учебников, научных работ и художественной литературы в одном месте</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'explore' %}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-compass me-2"></i>Исследовать
+                    </a>
+                    <a href="{% url 'addBook' user.id %}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-plus-circle me-2"></i>Добавить книгу
+                    </a>
+                    {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>Присоединиться
+                    </a>
+                    <a href="{% url 'explore' %}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-compass me-2"></i>Исследовать без регистрации
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-book text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Обширная коллекция</h4>
+                        <p class="card-text text-muted">
+                            Более 1000 учебников и книг по различным специальностям и направлениям подготовки
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-search text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Удобный поиск</h4>
+                        <p class="card-text text-muted">
+                            Поиск по названию, автору, категории и ключевым словам для быстрого нахождения нужного материала
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-cloud-arrow-down text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Бесплатный доступ</h4>
+                        <p class="card-text text-muted">
+                            Все материалы доступны бесплатно для студентов и преподавателей колледжа
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Последние добавленные книги</h2>
+            <a href="{% url 'explore' %}" class="btn btn-outline-primary">
+                Смотреть все <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for book in latest_books|slice:":6" %}
+            <div class="col-md-4 col-lg-2">
+                <div class="card book-card h-100">
+                    <div class="book-cover-small rounded-top d-flex align-items-center justify-content-center">
+                        <i class="bi bi-book text-white" style="font-size: 2rem;"></i>
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-truncate mb-1">{{ book.title }}</h6>
+                        <p class="card-text text-muted small mb-2">{{ book.author|truncatechars:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ book.category }}</span>
+                            <a href="{% url 'viewBook' book.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="empty-state">
+                    <i class="bi bi-book display-1 text-muted"></i>
+                    <h4 class="mt-3">Пока нет книг</h4>
+                    <p class="text-muted">Будьте первым, кто добавит книгу в библиотеку</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Наша библиотека в цифрах</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stat-number display-4 fw-bold text-primary">{{ total_books }}</div>
+                <div class="stat-label text-muted">Книг в коллекции</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number display-4 fw-bold text-success">{{ total_authors }}</div>
+                <div class="stat-label text-muted">Авторов</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number display-4 fw-bold text-warning">3</div>
+                <div class="stat-label text-muted">Основных категорий</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number display-4 fw-bold text-info">{{ total_users }}</div>
+                <div class="stat-label text-muted">Активных пользователей</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+            const target = parseInt(counter.textContent);
+            let current = 0;
+            const increment = target / 50;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.textContent = Math.floor(current);
+                    setTimeout(updateCounter, 30);
+                } else {
+                    counter.textContent = target;
+                }
+            };
+            
+            updateCounter();
+        });
+    });
+</script>
+{% endblock %}

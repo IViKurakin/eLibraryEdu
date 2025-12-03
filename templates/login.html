@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход - Электронная библиотека{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active">Вход</li>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-box-arrow-in-right display-4 text-primary"></i>
+                    </div>
+                    <h2 class="card-title mb-2">Вход в библиотеку</h2>
+                    <p class="text-muted">Введите учетные данные для доступа к вашему аккаунту</p>
+                </div>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'login' %}" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="email" class="form-label fw-semibold">Электронная почта</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="student@college.edu" value="{{ request.POST.email|default:'' }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold">Пароль</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Введите ваш пароль" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="text-end mt-2">
+                            <a href="#" class="text-decoration-none small">Забыли пароль?</a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">Запомнить меня</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти в систему
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <p class="mb-3">Нет аккаунта?</p>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person-plus me-2"></i>Создать новый аккаунт
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i>Вернуться на главную
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        });
+        
+        const emailInput = document.getElementById('email');
+        const savedEmail = localStorage.getItem('login_email');
+        
+        if (savedEmail && !emailInput.value) {
+            emailInput.value = savedEmail;
+        }
+        
+        emailInput.addEventListener('blur', function() {
+            if (this.value) {
+                localStorage.setItem('login_email', this.value);
+            }
+        });
+        
+        const rememberCheckbox = document.getElementById('remember');
+        if (savedEmail) {
+            rememberCheckbox.checked = true;
+        }
+    });
+</script>
+{% endblock %}

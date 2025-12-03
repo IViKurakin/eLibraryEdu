@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр книги</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .book-header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .book-title {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .book-author {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .book-content {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .book-content {
+                flex-direction: column;
+            }
+        }
+        
+        .book-cover {
+            flex: 0 0 300px;
+        }
+        
+        .book-cover img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .book-info {
+            flex: 1;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .book-description {
+            line-height: 1.7;
+            color: #444;
+            font-size: 1.1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+        }
+        
+        .meta-icon {
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="book-header fade-in">
+            <h1 class="book-title" id="bookTitle">Загрузка...</h1>
+            <h2 class="book-author" id="bookAuthor"></h2>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="readBook()">Читать онлайн</button>
+                <button class="btn btn-secondary" onclick="downloadBook()">Скачать книгу</button>
+                <button class="btn btn-outline" onclick="shareBook()">Поделиться</button>
+            </div>
+        </header>
+        
+        <div id="loading" class="loading">
+            <p>Загрузка информации о книге...</p>
+        </div>
+        
+        <div id="content" style="display: none;">
+            <div class="book-content">
+                <div class="book-cover fade-in">
+                    <img id="bookCover" src="" alt="Обложка книги" onerror="this.src='https://via.placeholder.com/300x450/cccccc/969696?text=Нет+обложки'">
+                </div>
+                
+                <div class="book-info">
+                    <div class="card fade-in">
+                        <h3 class="section-title">Описание</h3>
+                        <p class="book-description" id="bookDescription"></p>
+                        
+                        <div class="meta-info">
+                            <div class="meta-item">
+                                <span class="meta-icon">📚</span>
+                                <span>Жанр: <strong id="bookGenre"></strong></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">📅</span>
+                                <span>Год: <strong id="bookYear"></strong></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">📖</span>
+                                <span>Страниц: <strong id="bookPages"></strong></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">⭐</span>
+                                <span>Рейтинг: <strong id="bookRating"></strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card fade-in">
+                            <div class="stat-value" id="viewsCount">0</div>
+                            <div class="stat-label">Просмотров</div>
+                        </div>
+                        <div class="stat-card fade-in">
+                            <div class="stat-value" id="downloadsCount">0</div>
+                            <div class="stat-label">Скачиваний</div>
+                        </div>
+                        <div class="stat-card fade-in">
+                            <div class="stat-value" id="readingCount">0</div>
+                            <div class="stat-label">Читают сейчас</div>
+                        </div>
+                        <div class="stat-card fade-in">
+                            <div class="stat-value" id="favoritesCount">0</div>
+                            <div class="stat-label">В избранном</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+
+    <script>
+        function getBookId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id') || '1';
+            return parseInt(bookId);
+        }
+
+        const mockBookData = {
+            id: 1,
+            title: "Мастер и Маргарита",
+            author: "Михаил Булгаков",
+            description: "Один из самых загадочных и увлекательных романов XX века. История, в которой переплетаются реальность и мистика, любовь и предательство, добро и зло. Роман, ставший классикой русской литературы.",
+            genre: "Роман, Мистика",
+            year: 1967,
+            pages: 480,
+            rating: "4.8/5",
+            views: 12543,
+            downloads: 8921,
+            readingNow: 42,
+            favorites: 3105,
+            coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop"
+        };
+
+        function loadBookData() {
+            const loadingEl = document.getElementById('loading');
+            const contentEl = document.getElementById('content');
+            const errorEl = document.getElementById('errorMessage');
+            
+            try {
+                const bookId = getBookId();
+                
+                document.getElementById('bookTitle').textContent = mockBookData.title;
+                document.getElementById('bookAuthor').textContent = mockBookData.author;
+                document.getElementById('bookDescription').textContent = mockBookData.description;
+                document.getElementById('bookGenre').textContent = mockBookData.genre;
+                document.getElementById('bookYear').textContent = mockBookData.year;
+                document.getElementById('bookPages').textContent = mockBookData.pages;
+                document.getElementById('bookRating').textContent = mockBookData.rating;
+                
+                const coverImg = document.getElementById('bookCover');
+                coverImg.src = mockBookData.coverUrl;
+                coverImg.alt = `Обложка книги "${mockBookData.title}"`;
+                
+                document.getElementById('viewsCount').textContent = mockBookData.views.toLocaleString();
+                document.getElementById('downloadsCount').textContent = mockBookData.downloads.toLocaleString();
+                document.getElementById('readingCount').textContent = mockBookData.readingNow;
+                document.getElementById('favoritesCount').textContent = mockBookData.favorites.toLocaleString();
+                
+                loadingEl.style.display = 'none';
+                contentEl.style.display = 'block';
+                
+                trackBookView(bookId);
+                
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.textContent = 'Ошибка при загрузке данных: ' + error.message;
+                console.error('Ошибка загрузки книги:', error);
+            }
+        }
+
+        function trackBookView(bookId) {
+            try {
+                const viewedBooks = JSON.parse(localStorage.getItem('viewed_books') || '{}');
+                
+                if (!viewedBooks[bookId]) {
+                    viewedBooks[bookId] = {
+                        firstView: new Date().toISOString(),
+                        viewCount: 1,
+                        lastView: new Date().toISOString()
+                    };
+                } else {
+                    viewedBooks[bookId].viewCount = (viewedBooks[bookId].viewCount || 0) + 1;
+                    viewedBooks[bookId].lastView = new Date().toISOString();
+                }
+                
+                localStorage.setItem('viewed_books', JSON.stringify(viewedBooks));
+                console.log('Просмотр книги #' + bookId + ' сохранен');
+                
+            } catch (error) {
+                console.warn('Не удалось сохранить историю просмотра:', error);
+            }
+        }
+
+        function readBook() {
+            const bookId = getBookId();
+            alert('Открываем книгу #' + bookId + ' для чтения');
+            // window.location.href = '/read/' + bookId;
+        }
+
+        function downloadBook() {
+            const bookId = getBookId();
+            alert('Начинается скачивание книги #' + bookId);
+            // window.location.href = '/download/' + bookId;
+            
+            const downloadsEl = document.getElementById('downloadsCount');
+            const currentDownloads = parseInt(downloadsEl.textContent.replace(/,/g, '')) || 0;
+            downloadsEl.textContent = (currentDownloads + 1).toLocaleString();
+        }
+
+        function copyToClipboard(text) {
+            return new Promise((resolve, reject) => {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text)
+                        .then(resolve)
+                        .catch(reject);
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    
+                    try {
+                        const successful = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        if (successful) {
+                            resolve();
+                        } else {
+                            reject(new Error('Не удалось скопировать'));
+                        }
+                    } catch (err) {
+                        document.body.removeChild(textArea);
+                        reject(err);
+                    }
+                }
+            });
+        }
+
+        function shareBook() {
+            const bookTitle = document.getElementById('bookTitle').textContent;
+            const currentUrl = window.location.href;
+            const shareText = 'Рекомендую книгу: ' + bookTitle + '\n' + currentUrl;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: bookTitle,
+                    text: 'Посмотрите эту книгу',
+                    url: currentUrl
+                })
+                .then(() => console.log('Успешный шаринг'))
+                .catch((error) => {
+                    console.log('Ошибка шаринга:', error);
+                    copyShareUrl();
+                });
+            } else {
+                copyShareUrl();
+            }
+        }
+        
+        function copyShareUrl() {
+            const currentUrl = window.location.href;
+            copyToClipboard(currentUrl)
+                .then(() => {
+                    alert('Ссылка на книгу скопирована в буфер обмена!');
+                })
+                .catch((error) => {
+                    console.error('Ошибка копирования:', error);
+                    alert('Не удалось скопировать ссылку. Скопируйте ее вручную:\n' + currentUrl);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookData();
+            
+            document.getElementById('bookCover').addEventListener('click', function() {
+                this.classList.toggle('zoomed');
+            });
+            
+            setTimeout(function() {
+                const elements = document.querySelectorAll('.fade-in');
+                elements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.animationDelay = (index * 0.1) + 's';
+                    }, 100);
+                });
+            }, 500);
+        });
+
+        window.addEventListener('load', function() {
+            const img = document.getElementById('bookCover');
+            img.addEventListener('error', function() {
+                this.src = 'https://via.placeholder.com/300x450/cccccc/969696?text=Обложка+не+загружена';
+            });
+        });
+    </script>
+</body>
+</html>
